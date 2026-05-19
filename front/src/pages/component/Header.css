@@ -1,0 +1,45 @@
+.wrap_h {
+    height: 100px;
+    width: 100%;
+
+    background-color: #fff;
+
+    display: flex;
+    align-items: center;
+
+    position: fixed;
+    top: 0;
+    left: 0;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.wrap_h p {
+    width: 80px;
+    height: 80px;
+    color: aliceblue;
+
+    margin: 10px;
+
+    font-size: 3rem;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.people_wrap {
+    display: flex;
+}
+
+.wrap_h p:hover {
+    background-color: #0f4ca2;
+    border-radius: 20px;
+}
+
+
+.icon {
+    width: 48px;
+    height: 48px;
+}
