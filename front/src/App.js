@@ -12,7 +12,7 @@ function App() {
       <Routes> 
         <Route path="/main" element={<MainPage />} /> 
         <Route path="/login" element={<LoginPage />} /> 
-        <Route path="/Story" element={<Story />} />  {/* ← 추가 */}
+        <Route path="/story" element={<Story />} />  {/* ← 추가 */}
 
         <Route path="/" element={<Navigate to="/main" />} />
       </Routes> 
