@@ -5,6 +5,7 @@ import './App.css';
 import Header from './component/Header';
 import MainPage from './pages/MainPage';
 import LoginPage from './pages/LoginPage';
+import SignupPage from './pages/Signup';
 import Story from './pages/Story';
 import Store from './pages/Store';
 import Blacklist from './pages/Blacklist';
@@ -16,6 +17,7 @@ function App() {
       <Routes>
         <Route path="/main"      element={<MainPage />} />
         <Route path="/login"     element={<LoginPage />} />
+        <Route path="/signup"    element={<SignupPage />} />
         <Route path="/story"     element={<Story />} />
         <Route path="/store"     element={<Store />} />
         <Route path="/blacklist" element={<Blacklist />} />
