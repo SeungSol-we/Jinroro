@@ -1,21 +1,26 @@
-import React, { useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom';
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import './App.css';
 
+import Header from './component/Header';
 import MainPage from './pages/MainPage';
 import LoginPage from './pages/LoginPage';
-import Story from './pages/Story';  // ← 추가
+import Story from './pages/Story';
+import Store from './pages/Store';
+import Blacklist from './pages/Blacklist';
 
 function App() {
   return (
     <Router>
-      <Routes> 
-        <Route path="/main" element={<MainPage />} /> 
-        <Route path="/login" element={<LoginPage />} /> 
-        <Route path="/story" element={<Story />} />  {/* ← 추가 */}
-
-        <Route path="/" element={<Navigate to="/main" />} />
-      </Routes> 
+      <Header />
+      <Routes>
+        <Route path="/main"      element={<MainPage />} />
+        <Route path="/login"     element={<LoginPage />} />
+        <Route path="/story"     element={<Story />} />
+        <Route path="/store"     element={<Store />} />
+        <Route path="/blacklist" element={<Blacklist />} />
+        <Route path="/"          element={<Navigate to="/main" />} />
+      </Routes>
     </Router>
   );
 }
