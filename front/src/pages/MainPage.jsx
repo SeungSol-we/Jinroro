@@ -51,7 +51,7 @@ const MainPage = () => {
         </div>
         <div className="main-hero-right">
           <div className="main-hero-illust">
-            <img src="/hmmmm.png" alt="진로 탐색 일러스트" />
+            <img src="/main.png" alt="진로 탐색 일러스트" />
           </div>
         </div>
       </section>
