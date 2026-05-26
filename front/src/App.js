@@ -8,6 +8,7 @@ import LoginPage from './pages/LoginPage';
 import SignupPage from './pages/Signup';
 import Story from './pages/Story';
 import Store from './pages/Store';
+import Setting from './pages/Setting';
 import Blacklist from './pages/Blacklist';
 
 function App() {
@@ -20,6 +21,7 @@ function App() {
         <Route path="/signup"    element={<SignupPage />} />
         <Route path="/story"     element={<Story />} />
         <Route path="/store"     element={<Store />} />
+        <Route path="/settings"  element={<Setting />} />
         <Route path="/blacklist" element={<Blacklist />} />
         <Route path="/"          element={<Navigate to="/main" />} />
       </Routes>
