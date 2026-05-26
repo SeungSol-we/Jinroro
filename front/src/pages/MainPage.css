@@ -77,21 +77,14 @@
     }
     .main-hero-illust {
     width: 320px;
-    height: 260px;
-    background: #fff;
-    border: 1.5px solid #e5e2dc;
+    height: 320px;
     border-radius: 28px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 14px;
+    overflow: hidden;
     }
-    .main-illust-emoji { font-size: 64px; }
-    .main-illust-label {
-    font-size: 14px;
-    font-weight: 500;
-    color: #a8a29e;
+    .main-hero-illust img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
     }
 
     /* ── 기능 소개 ── */
@@ -147,6 +140,53 @@
     color: #78716c;
     line-height: 1.7;
     margin: 0;
+    }
+
+    /* ── CTA 섹션 ── */
+    .main-cta {
+    padding: 80px 40px;
+    margin-top: 60px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 28px;
+    background: #f8f7f4;
+    }
+    .main-cta-text {
+    font-size: clamp(16px, 2vw, 20px);
+    font-weight: 500;
+    color: #44403c;
+    margin: 0;
+    text-align: center;
+    letter-spacing: -0.2px;
+    }
+    .main-cta-btn {
+    padding: 14px 36px;
+    border-radius: 14px;
+    background: transparent;
+    border: 1.5px solid #c4bfb8;
+    font-size: 16px;
+    font-weight: 600;
+    color: #44403c;
+    font-family: inherit;
+    cursor: pointer;
+    transition: all 0.2s;
+    }
+    .main-cta-btn:hover {
+    border-color: #7c3aed;
+    color: #7c3aed;
+    background: #f5f3ff;
+    }
+
+    /* ── 푸터 ── */
+    .main-footer {
+    background: #f0ede8;
+    border-top: 1px solid #e5e2dc;
+    padding: 24px 40px;
+    text-align: center;
+    font-size: 13px;
+    color: #a8a29e;
+    font-family: 'Noto Sans KR', sans-serif;
     }
 
     /* 반응형 */

@@ -1,0 +1,127 @@
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap');
+
+    .store-root {
+    min-height: 100vh;
+    background: #f8f7f4; /* Story 페이지의 부드러운 배경색 유지 */
+    font-family: 'Noto Sans KR', sans-serif;
+    color: #1c1917;
+    position: relative;
+    }
+
+    /* 본문 컨테이너 */
+    .store-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding-top: 100px; /* 상단 헤더 공간 확보를 위한 여백 */
+    text-align: center;
+    }
+
+    .anim-fadeup {
+    animation: fadeUp 0.6s ease-out both;
+    }
+    @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* 타이틀 및 서브타이틀 */
+    .store-main-title {
+    font-size: 36px;
+    font-weight: 900;
+    color: #1c1917;
+    margin-bottom: 12px;
+    }
+    .store-main-subtitle {
+    font-size: 16px;
+    color: #78716c;
+    margin-bottom: 48px;
+    }
+
+    /* 탭 메뉴 디자인 (이미지 형태 복제) */
+    .store-tabs-wrapper {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 80px;
+    }
+    .store-tabs-bar {
+    display: flex;
+    background: #e7e5e0; /* 연회색 바닥 */
+    padding: 4px;
+    border-radius: 12px;
+    width: fit-content;
+    }
+    .tab-btn {
+    padding: 10px 40px;
+    border: none;
+    background: transparent;
+    border-radius: 10px;
+    font-size: 15px;
+    font-weight: 500;
+    color: #78716c;
+    cursor: pointer;
+    transition: all 0.2s;
+    }
+    .tab-btn.active {
+    background: #fff;
+    color: #1c1917;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+    }
+
+    /* 중앙 빈 화면 영역 */
+    .store-empty-content {
+    margin-top: 100px;
+    }
+    .empty-msg-text {
+    font-size: 16px;
+    color: #78716c;
+    margin-bottom: 24px;
+    }
+
+    /* 게임 시작 버튼 (이미지의 블루 포인트 + Story의 스타일) */
+    .go-game-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 28px;
+    border-radius: 100px;
+    background: #1C1917; /* 이미지에 나온 블루 색상 반영 */
+    color: #fff;
+    font-size: 16px;
+    font-weight: 700;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s;
+    }
+    .go-game-btn:hover {
+    background: #1C1917;
+    transform: translateY(-1px);
+    }
+    .go-game-btn .arrow {
+    font-size: 20px;
+    line-height: 1;
+    }
+
+    /* 오른쪽 하단 배지 스타일 */
+    .fixed-made-badge {
+    position: fixed;
+    right: 20px;
+    bottom: 20px;
+    background: #1c1917;
+    color: #fff;
+    padding: 10px 16px;
+    border-radius: 100px;
+    font-size: 13px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    .anim-fadein {
+    animation: fadeIn 0.8s ease both;
+    }
+    @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+    }

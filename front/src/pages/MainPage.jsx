@@ -46,13 +46,12 @@ const MainPage = () => {
             나에게 딱 맞는 진로를 찾아보세요.
           </p>
           <button className="main-hero-btn" onClick={() => navigate('/story')}>
-            🎮 싫음 탐색기 시작
+            싫음 탐색기 시작
           </button>
         </div>
         <div className="main-hero-right">
           <div className="main-hero-illust">
-            <span className="main-illust-emoji">🗺️</span>
-            <p className="main-illust-label">나만의 진로 지도</p>
+            <img src="/hmmmm.png" alt="진로 탐색 일러스트" />
           </div>
         </div>
       </section>
@@ -70,6 +69,19 @@ const MainPage = () => {
           ))}
         </div>
       </section>
+
+      {/* ── CTA 섹션 ── */}
+      <section className="main-cta">
+        <p className="main-cta-text">지금 바로 시작해서 당신의 진로를 찾아보세요.</p>
+        <button className="main-cta-btn" onClick={() => navigate('/story')}>
+          시작하기 →
+        </button>
+      </section>
+
+      {/* ── 푸터 ── */}
+      <footer className="main-footer">
+        2026 진로로 - 당신의 진로 탐색 파트너
+      </footer>
 
     </div>
   );

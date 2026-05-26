@@ -306,9 +306,6 @@
                 ))}
                 </div>
 
-                <div style={{ textAlign: "center", marginTop: 20, fontSize: 12, color: "#c4bfb8" }}>
-                본능대로 고르세요
-                </div>
             </div>
             </div>
         )}

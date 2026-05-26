@@ -69,7 +69,7 @@
         <div className="bl-header">
             <div className="bl-header-inner">
             <div>
-                <div className="bl-badge">🚫 블랙리스트</div>
+                <div className="bl-badge">블랙리스트</div>
                 <h1 className="bl-title">피해야 할 회사 리뷰</h1>
                 <p className="bl-subtitle">선배들의 솔직한 경험담. 지원 전에 꼭 확인하세요.</p>
             </div>
@@ -133,7 +133,7 @@
                     <div className="bl-card-footer">
                     <span className="bl-card-info">{r.author} · {r.date}</span>
                     <button className="bl-like-btn" onClick={() => handleLike(r.id)}>
-                        👍 도움됐어요 {r.likes}
+                        도움됐어요 {r.likes}
                     </button>
                     </div>
                 </div>
