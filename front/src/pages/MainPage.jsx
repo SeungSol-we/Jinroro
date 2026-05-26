@@ -46,7 +46,7 @@ const MainPage = () => {
             나에게 딱 맞는 진로를 찾아보세요.
           </p>
           <button className="main-hero-btn" onClick={() => navigate('/story')}>
-            싫음 탐색기 시작
+              싫음 탐색기 시작
           </button>
         </div>
         <div className="main-hero-right">
@@ -70,7 +70,6 @@ const MainPage = () => {
         </div>
       </section>
 
-      {/* ── CTA 섹션 ── */}
       <section className="main-cta">
         <p className="main-cta-text">지금 바로 시작해서 당신의 진로를 찾아보세요.</p>
         <button className="main-cta-btn" onClick={() => navigate('/story')}>
@@ -80,7 +79,7 @@ const MainPage = () => {
 
       {/* ── 푸터 ── */}
       <footer className="main-footer">
-        2026 진로로 - 당신의 진로 탐색 파트너
+        Jinroro - 당신의 진로 탐색 파트너
       </footer>
 
     </div>
