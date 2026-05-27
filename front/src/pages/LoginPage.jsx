@@ -83,7 +83,7 @@ const LoginPage = () => {
           
           <button type="submit" className="go" disabled={isLoading}>
               <p className="button_text">
-                {isLoading ? "LOADING..." : "START >"}
+                {isLoading ? "LOADING..." : "START"}
               </p>
           </button>
         </form>
