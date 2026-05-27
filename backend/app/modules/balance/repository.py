@@ -66,10 +66,10 @@ class BalanceRepository:
         )
         return list(result.scalars().all())
 
-    async def get_user_fear_tags(self, user_id: int) -> list[UserFearTag]:
+    async def get_user_fear_tags(self, user_id: int, include_deleted: bool = False) -> list[UserFearTag]:
         result = await self.db.execute(
             select(UserFearTag)
-            .where(UserFearTag.user_id == user_id)
+            .where(UserFearTag.user_id == user_id, UserFearTag.is_deleted == include_deleted)
             .options(selectinload(UserFearTag.tag))
             .order_by(UserFearTag.accumulated_weight.desc())
         )
@@ -85,10 +85,33 @@ class BalanceRepository:
         user_tag = result.scalar_one_or_none()
         if user_tag:
             user_tag.accumulated_weight += weight
+            user_tag.is_deleted = False  # 재누적 시 휴지통에서 자동 탈출
         else:
-            user_tag = UserFearTag(user_id=user_id, tag_id=tag_id, accumulated_weight=weight)
+            user_tag = UserFearTag(user_id=user_id, tag_id=tag_id, accumulated_weight=weight, is_deleted=False)
             self.db.add(user_tag)
         await self.db.flush()
+
+    async def soft_delete_fear_tag(self, user_id: int, tag_id: int) -> bool:
+        result = await self.db.execute(
+            select(UserFearTag).where(UserFearTag.user_id == user_id, UserFearTag.tag_id == tag_id, UserFearTag.is_deleted == False)
+        )
+        user_tag = result.scalar_one_or_none()
+        if not user_tag:
+            return False
+        user_tag.is_deleted = True  # 휴지통으로 이동 플래그
+        await self.db.flush()
+        return True
+
+    async def restore_fear_tag(self, user_id: int, tag_id: int) -> bool:
+        result = await self.db.execute(
+            select(UserFearTag).where(UserFearTag.user_id == user_id, UserFearTag.tag_id == tag_id, UserFearTag.is_deleted == True)
+        )
+        user_tag = result.scalar_one_or_none()
+        if not user_tag:
+            return False
+        user_tag.is_deleted = False  # 보관함으로 복구
+        await self.db.flush()
+        return True
 
     async def get_all_fear_tags(self):
         from app.modules.balance.models import FearTag

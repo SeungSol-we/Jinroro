@@ -50,8 +50,22 @@ class AnswerOut(BaseModel):
 
 
 class AvoidTagOut(BaseModel):
+    id: int
+    tag_id: int
     tag_name: str
     accumulated_weight: float
+    description: Optional[str] = None
+
+    class Config:
+        from_attributes = True
+
+
+class TrashTagOut(BaseModel):
+    id: int
+    tag_id: int
+    tag_name: str
+    accumulated_weight: float
+    description: Optional[str] = None
 
     class Config:
         from_attributes = True
@@ -62,24 +76,21 @@ class KeywordSuggestionOut(BaseModel):
     tag_id: int
     tag_name: str
     description: Optional[str]
-    already_in_box: bool  # 이미 싫음 보관함에 있는지 여부
+    already_in_box: bool
 
 
 class ManualTagRequest(BaseModel):
-    """사용자가 직접 싫음 보관함에 태그 추가"""
     tag_id: int
 
 
 class ManualTagDeleteRequest(BaseModel):
-    """사용자가 직접 싫음 보관함에서 태그 제거"""
     tag_id: int
 
 
 class AiAnswerRequest(BaseModel):
-    """AI 생성 시나리오 답변 제출"""
-    ai_scenario_id: int        # AiGeneratedScenario.id
+    ai_scenario_id: int
     selected_label: str        # "left" | "right"
-    selected_fear_tag_id: int  # 선택한 쪽의 fear_tag_id
+    selected_fear_tag_id: int
 
 
 class AiScenarioOut(BaseModel):
@@ -87,3 +98,15 @@ class AiScenarioOut(BaseModel):
     scenario_title: str
     scenario_description: str
     choices: list[dict]
+
+
+# ── AI 싫음 기반 직업 분석 리포트 응답 스키마 ──
+class UnfitJobDetail(BaseModel):
+    job_title: str
+    reason: str
+
+
+class JobAnalysisOut(BaseModel):
+    summary: str
+    unfit_jobs: list[UnfitJobDetail]
+    advice: str
