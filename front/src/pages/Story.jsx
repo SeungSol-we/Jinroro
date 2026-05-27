@@ -12,14 +12,14 @@ export default function Story() {
   const [avoidTags, setAvoidTags] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
 
-  // 💡 [변경] 고유성 오류를 방지하기 위해 태그의 '명칭(string)'을 기준으로 다중 선택 상태를 관리합니다.
+  // 고유성 오류를 방지하기 위해 태그의 '명칭(string)'을 기준으로 다중 선택 상태를 관리합니다.
   const [selectedTagNames, setSelectedTagNames] = useState([]);
   const [isSavedToStorage, setIsSavedToStorage] = useState(false);
 
   const TOTAL_STEPS = 5;
 
   const fetchNextAiScenario = async () => {
-    // 💡 [해결] 다음 시나리오를 불러오기 직전에 프론트엔드의 이전 선택 흔적(A / B 버튼)을 확실하게 비워줍니다.
+    // 💡 [해결] 다음 질문으로 넘어가기 전, 이전 질문의 흔적(선택 하이라이트)을 확실하게 지웁니다.
     setSelectedLabel(null);
     setIsLoading(true);
     
@@ -107,7 +107,7 @@ export default function Story() {
         throw new Error("답변 제출 실패");
       }
 
-      // 💡 선택 모션 유지를 위한 타이머 실행 후 스텝 전환
+      // 선택 모션 유지를 위한 타이머 실행 후 스텝 전환
       setTimeout(async () => {
         if (step >= TOTAL_STEPS) {
           await fetchFinalResults(token);
@@ -142,7 +142,7 @@ export default function Story() {
     }
   };
 
-  // 💡 [해결] 전체 선택 버그 제어를 위해 고유 명칭(tagName)으로 토글 분기 처리
+  // 결과창 리스트 클릭 시 개별 토글 처리
   const handleToggleTag = (tagName) => {
     if (isSavedToStorage) return; 
     if (selectedTagNames.includes(tagName)) {
@@ -152,6 +152,7 @@ export default function Story() {
     }
   };
 
+  // 💡 [해결] 백엔드 라우터 구조(단건 순회 처리)에 최적화하여 전송하는 함수
   const saveToDislikeStorage = async () => {
     if (selectedTagNames.length === 0) {
       alert("보관함에 넣을 키워드를 하나 이상 선택해 주세요!");
@@ -161,31 +162,40 @@ export default function Story() {
     const token = localStorage.getItem("accessToken");
     setIsLoading(true);
 
-    // 💡 선택된 이름들을 기반으로 원래 object에서 유효한 id 배열 필터링 추출
+    // 1. 선택된 태그명들을 기반으로 백엔드용 tag_id 목록을 정제 추출합니다.
     const finalTargetIds = avoidTags
       .filter(tag => selectedTagNames.includes(tag.tag_name))
       .map(tag => tag.fear_tag_id || tag.id)
       .filter(id => id !== undefined && id !== null);
 
     try {
-      const response = await fetch("http://localhost:8000/balance/blacklist", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`
-        },
-        body: JSON.stringify({
-          fear_tag_ids: finalTargetIds
-        }),
-      });
+      // 2. 백엔드 라우터 규칙인 `POST /balance/avoid-tags/manual` 주소로 
+      //    선택한 키워드 개수만큼 비동기 요청을 동시에 전부 쏩니다.
+      const requestPromises = finalTargetIds.map(tagId =>
+        fetch("http://localhost:8000/balance/avoid-tags/manual", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
+          },
+          body: JSON.stringify({ tag_id: tagId }), // ManualTagRequest 포맷 통일
+        })
+      );
 
-      if (!response.ok) throw new Error("싫음 보관함 저장 실패");
+      // 모든 API 요청이 끝날 때까지 대기합니다.
+      const responses = await Promise.all(requestPromises);
+
+      // 하나라도 실패한 요청이 있는지 검증합니다.
+      const anyFailed = responses.some(res => !res.ok);
+      if (anyFailed) {
+        throw new Error("일부 키워드를 보관함에 넣지 못했습니다.");
+      }
 
       alert("🔒 선택하신 키워드가 '싫음 보관함'에 안전하게 보관되었습니다!");
       setIsSavedToStorage(true);
     } catch (error) {
       console.error(error);
-      alert("보관함 저장 중 에러가 발생했습니다. 백엔드 라우터를 확인해 주세요.");
+      alert("보관함 저장 중 에러가 발생했습니다. 백엔드 매핑 데이터를 다시 체크하세요.");
     } finally {
       setIsLoading(false);
     }
