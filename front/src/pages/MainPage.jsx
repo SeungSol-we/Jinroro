@@ -39,7 +39,7 @@ const MainPage = () => {
         <div className="main-hero-left">
           <p className="main-hero-tag">✦ 진로 탐색 서비스</p>
           <h1 className="main-hero-slogan">
-            좋은 건 알아도<br />싫은 건 몰라?
+            싫은 것 부터<br />확실히 알자!
           </h1>
           <p className="main-hero-desc">
             싫어하는 것을 하나씩 골라내면서<br />
