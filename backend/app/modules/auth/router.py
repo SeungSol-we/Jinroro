@@ -45,3 +45,14 @@ async def me(
     """내 계정 정보"""
     service = AuthService(db)
     return await service.get_current_user(creds.credentials)
+
+@router.delete("/me", status_code=204)
+async def delete_account(
+    creds: HTTPAuthorizationCredentials = Depends(bearer),
+    db: AsyncSession = Depends(get_db),
+):
+    """회원 탈퇴"""
+    service = AuthService(db)
+    user = await service.get_current_user(creds.credentials)
+    await db.delete(user)
+    await db.commit()

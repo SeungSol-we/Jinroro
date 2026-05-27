@@ -8,6 +8,14 @@
     const [drawerOpen, setDrawerOpen] = useState(false);
 
     const isActive = (path) => location.pathname === path;
+    const isLoggedIn = !!localStorage.getItem("accessToken");
+
+    const handleLogout = () => {
+        localStorage.removeItem("accessToken");
+        localStorage.removeItem("refreshToken");
+        setDrawerOpen(false);
+        navigate("/login");
+    };
 
     return (
         <>
@@ -16,7 +24,6 @@
             진로로
             </button>
 
-            {/* 오른쪽 버튼들 */}
             <div className="header-right">
             <button className={`header-btn${isActive('/story') ? ' active' : ''}`} onClick={() => navigate('/story')}>
                 싫음 탐색기
@@ -28,17 +35,14 @@
                 블랙리스트
             </button>
 
-            {/* 햄버거 메뉴 */}
             <button className="header-menu-btn" onClick={() => setDrawerOpen(true)}>
                 <span /><span /><span />
             </button>
             </div>
         </header>
 
-        {/* 헤더 높이 보정 */}
         <div className="header-spacer" />
 
-        {/* 드로어 */}
         {drawerOpen && (
             <>
             <div className="drawer-overlay" onClick={() => setDrawerOpen(false)} />
@@ -49,11 +53,23 @@
                 </div>
 
                 <div className="drawer-menu">
-                <button className="drawer-item" onClick={() => { navigate('/login'); setDrawerOpen(false); }}>
-                    <div>
+                {isLoggedIn ? (
+                    <>
+                    <button className="drawer-item" onClick={() => { navigate('/mypage'); setDrawerOpen(false); }}>
+                        <div className="drawer-item-label">마이페이지</div>
+                    </button>
+                    <button className="drawer-item" onClick={() => { navigate('/settings'); setDrawerOpen(false); }}>
+                        <div className="drawer-item-label">설정</div>
+                    </button>
+                    <button className="drawer-item" onClick={handleLogout}>
+                        <div className="drawer-item-label">로그아웃</div>
+                    </button>
+                    </>
+                ) : (
+                    <button className="drawer-item" onClick={() => { navigate('/login'); setDrawerOpen(false); }}>
                     <div className="drawer-item-label">로그인</div>
-                    </div>
-                </button>
+                    </button>
+                )}
                 </div>
             </div>
             </>

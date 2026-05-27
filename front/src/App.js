@@ -10,6 +10,7 @@ import Story from './pages/Story';
 import Store from './pages/Store';
 import Setting from './pages/Setting';
 import Blacklist from './pages/Blacklist';
+import MyPage from './pages/MyPage';
 
 function App() {
   return (
@@ -23,6 +24,7 @@ function App() {
         <Route path="/store"     element={<Store />} />
         <Route path="/settings"  element={<Setting />} />
         <Route path="/blacklist" element={<Blacklist />} />
+        <Route path="/mypage"    element={<MyPage />} />
         <Route path="/"          element={<Navigate to="/main" />} />
       </Routes>
     </Router>

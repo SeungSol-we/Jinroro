@@ -1,0 +1,131 @@
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap');
+
+    * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    }
+
+    .wrap {
+    min-height: 100vh;
+    background: #f8f7f4;
+    font-family: 'Noto Sans KR', sans-serif;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    }
+
+    .text_wrap {
+    width: 100%;
+    max-width: 420px;
+    padding: 56px 48px;
+    background: #fff;
+    border: 1.5px solid #e5e2dc;
+    border-radius: 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 32px;
+    }
+
+    .main_text {
+    font-size: 36px;
+    font-weight: 900;
+    color: #1c1917;
+    letter-spacing: -1px;
+    }
+
+    .input_group {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    }
+
+    .input_group input {
+    width: 100%;
+    padding: 14px 18px;
+    border: 1.5px solid #e5e2dc;
+    border-radius: 12px;
+    font-size: 15px;
+    font-family: 'Noto Sans KR', sans-serif;
+    color: #1c1917;
+    background: #f8f7f4;
+    outline: none;
+    transition: border-color 0.2s;
+    }
+
+    .input_group input:focus {
+    border-color: #7c3aed;
+    background: #fff;
+    }
+
+    .input_group input::placeholder {
+    color: #a8a29e;
+    }
+
+    .input_group input:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    }
+
+    .go {
+    margin-top: 24px;
+    width: 100%;
+    padding: 16px;
+    border-radius: 100px;
+    background: #3730a3;
+    border: none;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .go:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 32px rgba(55, 48, 163, 0.3);
+    }
+
+    .go:active {
+    transform: scale(0.98);
+    }
+
+    .go:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+    }
+
+    .sub_text {
+    font-size: 15px;
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: 0.04em;
+    }
+
+    p.sub_text {
+    color: #1c1917;
+    font-weight: 400;
+    font-size: 14px;
+    }
+    p.button_text{
+    color: #fff;
+    }
+
+    .signup_link {
+    color: #7c3aed;
+    font-weight: 700;
+    cursor: pointer;
+    text-decoration: underline;
+    }
+
+    .signup_link:hover {
+    color: #3730a3;
+    }
+
+    @media (max-width: 768px) {
+    .text_wrap {
+        margin: 24px;
+        padding: 40px 28px;
+    }
+    }
