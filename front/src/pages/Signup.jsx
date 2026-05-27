@@ -83,7 +83,7 @@ const SignupPage = () => {
           
           <button type="submit" className="go" disabled={isLoading}>
             <p className="sub_text">
-              {isLoading ? "LOADING..." : "START >"}
+              {isLoading ? "LOADING..." : "START"}
             </p>
           </button>
         </form>
