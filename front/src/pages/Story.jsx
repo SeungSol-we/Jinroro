@@ -1,372 +1,375 @@
-    import { useState } from "react";
-    import "./Story.css";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import "./Story.css";
 
-    // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-    // ✏️  여기에 스토리와 선택지를 채워넣으세요
-    //
-    // 각 항목 구조:
-    //   id      : 문항 순서 번호 (숫자)
-    //   scene   : 상단에 표시되는 장면 라벨 (예: "1화", "에피소드 1" 등)
-    //   story   : 📖 스토리 본문 — 여러 단락을 배열로 작성
-    //             (줄바꿈 단락마다 별도 문자열로 넣으면 단락 구분됩니다)
-    //   question: 스토리 아래 표시되는 선택 질문
-    //   options : A/B 두 선택지
-    //     ├ label : "A" 또는 "B" (고정)
-    //     ├ text  : 버튼 메인 텍스트 (\n으로 줄바꿈 가능)
-    //     ├ sub   : 버튼 보조 설명 (짧게)
-    //     └ tag   : 결과 계산용 키값 (영문, 중복 가능)
-    // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+export default function Story() {
+  const navigate = useNavigate();
 
-    const QUESTIONS = [
-    {
-        id: 1,
-        scene: "상황 1",
-        story: [
-        "스토리 첫 번째 단락을 여기에 작성해주세요.",
-        "두 번째 단락은 이렇게 이어서 씁니다. 여러 단락을 배열로 추가할수록 글이 자연스럽게 이어집니다.",
-        ],
-        question: "✏️ 첫 번째 선택 질문을 여기에 작성해주세요.",
-        options: [
-        { label: "A", text: "✏️ A 선택지\n텍스트", sub: "✏️ A 보조 설명", tag: "solo" },
-        { label: "B", text: "✏️ B 선택지\n텍스트", sub: "✏️ B 보조 설명", tag: "team" },
-        ],
-    },
-    {
-        id: 2,
-        scene: "이어진 상황 2",
-        story: [
-        "✏️ 두 번째 스토리 첫 번째 단락.",
-        "두 번째 단락을 이어서 씁니다.",
-        ],
-        question: "✏️ 두 번째 선택 질문을 여기에 작성해주세요.",
-        options: [
-        { label: "A", text: "✏️ A 선택지\n텍스트", sub: "✏️ A 보조 설명", tag: "stable" },
-        { label: "B", text: "✏️ B 선택지\n텍스트", sub: "✏️ B 보조 설명", tag: "dynamic" },
-        ],
-    },
-    {
-        id: 3,
-        scene: "이어진 상황 3",
-        story: [
-        "✏️ 세 번째 스토리 첫 번째 단락.",
-        "두 번째 단락을 이어서 씁니다.",
-        ],
-        question: "✏️ 세 번째 선택 질문을 여기에 작성해주세요.",
-        options: [
-        { label: "A", text: "✏️ A 선택지\n텍스트", sub: "✏️ A 보조 설명", tag: "creative" },
-        { label: "B", text: "✏️ B 선택지\n텍스트", sub: "✏️ B 보조 설명", tag: "analytical" },
-        ],
-    },
-    {
-        id: 4,
-        scene: "이어진 상황 4",
-        story: [
-        "✏️ 네 번째 스토리 첫 번째 단락.",
-        "두 번째 단락을 이어서 씁니다.",
-        ],
-        question: "✏️ 네 번째 선택 질문을 여기에 작성해주세요.",
-        options: [
-        { label: "A", text: "✏️ A 선택지\n텍스트", sub: "✏️ A 보조 설명", tag: "employed" },
-        { label: "B", text: "✏️ B 선택지\n텍스트", sub: "✏️ B 보조 설명", tag: "independent" },
-        ],
-    },
-    {
-        id: 5,
-        scene: "이어진 상황 5",
-        story: [
-        "✏️ 다섯 번째 스토리 첫 번째 단락.",
-        "두 번째 단락을 이어서 씁니다.",
-        ],
-        question: "✏️ 다섯 번째 선택 질문을 여기에 작성해주세요.",
-        options: [
-        { label: "A", text: "✏️ A 선택지\n텍스트", sub: "✏️ A 보조 설명", tag: "people" },
-        { label: "B", text: "✏️ B 선택지\n텍스트", sub: "✏️ B 보조 설명", tag: "tech" },
-        ],
-    },
-    ];
+  const [phase, setPhase] = useState("intro");
+  const [currentScenario, setCurrentScenario] = useState(null);
+  const [step, setStep] = useState(0);
+  const [selectedLabel, setSelectedLabel] = useState(null);
+  const [avoidTags, setAvoidTags] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
 
-    const RESULTS = [
-    {
-        type: "크리에이티브 디렉터",
-        emoji: "🎨",
-        color: "#7c3aed",
-        bg: "#f5f3ff",
-        border: "#ddd6fe",
-        match: (t) => t.creative >= 1 && t.dynamic >= 1,
-        desc: "당신은 새로운 것을 만드는 데 탁월한 감각을 가졌어요. 콘텐츠 크리에이터, UX 디자이너, 브랜드 기획자 등 창의성을 살릴 수 있는 직군이 최고의 선택!",
-        jobs: ["UX/UI 디자이너", "브랜드 기획자", "콘텐츠 크리에이터", "광고 PD"],
-        tip: "포트폴리오를 꾸준히 쌓아가세요. 나만의 작업물이 최고의 명함입니다.",
-    },
-    {
-        type: "데이터 전문가",
-        emoji: "📈",
-        color: "#0369a1",
-        bg: "#f0f9ff",
-        border: "#bae6fd",
-        match: (t) => t.analytical >= 1 && t.solo >= 1,
-        desc: "논리와 수치로 세상을 보는 당신. 데이터 분석가, 개발자, 퀀트 애널리스트처럼 정밀함이 무기인 직업이 딱 맞아요.",
-        jobs: ["데이터 애널리스트", "백엔드 개발자", "금융 분석가", "리서처"],
-        tip: "SQL, Python 등 분석 툴을 익혀두면 어느 산업에서도 환영받아요.",
-    },
-    {
-        type: "비즈니스 컨설턴트",
-        emoji: "🧭",
-        color: "#0f766e",
-        bg: "#f0fdfa",
-        border: "#99f6e4",
-        match: (t) => t.team >= 1 && t.analytical >= 1,
-        desc: "전략적 사고와 팀워크를 겸비한 리더형! 컨설팅, 전략기획, PM처럼 비즈니스를 조율하는 역할이 천직이에요.",
-        jobs: ["경영 컨설턴트", "전략기획자", "프로덕트 매니저", "MBA 진학"],
-        tip: "다양한 산업을 경험하고 인맥을 넓히는 게 핵심 경쟁력입니다.",
-    },
-    {
-        type: "소셜 임팩트 전문가",
-        emoji: "🌱",
-        color: "#15803d",
-        bg: "#f0fdf4",
-        border: "#bbf7d0",
-        match: (t) => t.people >= 1 && t.team >= 1,
-        desc: "사람과 사회에 기여하는 일에서 에너지를 얻는 타입. 교육, 사회복지, NGO, 의료 분야에서 진정한 보람을 찾을 거예요.",
-        jobs: ["사회복지사", "교육기획자", "NPO 활동가", "상담사"],
-        tip: "현장 경험이 강점입니다. 자원봉사와 인턴으로 먼저 뛰어들어보세요.",
-    },
-    {
-        type: "스타트업 창업가",
-        emoji: "🚀",
-        color: "#b45309",
-        bg: "#fffbeb",
-        border: "#fde68a",
-        match: (t) => t.independent >= 1 && t.dynamic >= 1,
-        desc: "틀을 깨고 나만의 길을 만드는 개척자! 스타트업 창업, 프리랜서, 1인 기업가로서 독립적인 커리어를 만들어갈 당신이에요.",
-        jobs: ["스타트업 창업가", "프리랜서", "유튜버·인플루언서", "디지털 노마드"],
-        tip: "빠른 실행과 실패 경험이 자산입니다. 지금 당장 작은 것부터 시작해보세요.",
-    },
-    {
-        type: "IT 이노베이터",
-        emoji: "⚡",
-        color: "#7c3aed",
-        bg: "#faf5ff",
-        border: "#e9d5ff",
-        match: (t) => t.tech >= 1 && (t.dynamic >= 1 || t.analytical >= 1),
-        desc: "기술로 세상을 바꾸고 싶은 당신! 개발자, AI 엔지니어, 테크 PM처럼 미래를 설계하는 직군이 잘 맞아요.",
-        jobs: ["소프트웨어 엔지니어", "AI/ML 엔지니어", "DevOps", "테크 스타트업 합류"],
-        tip: "깃헙 잔디를 채우며 꾸준히 성장하세요. 기술은 배신하지 않아요.",
-    },
-    ];
+  // 💡 [변경] 고유성 오류를 방지하기 위해 태그의 '명칭(string)'을 기준으로 다중 선택 상태를 관리합니다.
+  const [selectedTagNames, setSelectedTagNames] = useState([]);
+  const [isSavedToStorage, setIsSavedToStorage] = useState(false);
 
-    // ⚠️ 나중에 이 함수를 AI API 호출로 교체하면 됩니다
-    function getResult(answers) {
-    const tags = {};
-    answers.forEach((a) => { tags[a] = (tags[a] || 0) + 1; });
-    for (const r of RESULTS) {
-        if (r.match(tags)) return r;
-    }
-    return RESULTS[Math.floor(Math.random() * RESULTS.length)];
-    }
+  const TOTAL_STEPS = 5;
 
-    export default function Story() {
-    const [phase, setPhase] = useState("intro");
-    const [step, setStep] = useState(0);
-    const [answers, setAnswers] = useState([]);
-    const [selected, setSelected] = useState(null);
-    const [result, setResult] = useState(null);
-    const [animKey, setAnimKey] = useState(0);
+  const fetchNextAiScenario = async () => {
+    // 💡 [해결] 다음 시나리오를 불러오기 직전에 프론트엔드의 이전 선택 흔적(A / B 버튼)을 확실하게 비워줍니다.
+    setSelectedLabel(null);
+    setIsLoading(true);
+    
+    try {
+      const token = localStorage.getItem("accessToken");
+      if (!token) {
+        alert("로그인이 필요합니다.");
+        navigate("/");
+        return;
+      }
 
-    function startGame() {
-        setPhase("game");
-        setStep(0);
-        setAnswers([]);
-        setSelected(null);
-        setAnimKey((k) => k + 1);
-    }
-
-    function handleSelect(tag) {
-        if (selected !== null) return;
-        setSelected(tag);
-        setTimeout(() => {
-        const next = [...answers, tag];
-        if (step + 1 >= QUESTIONS.length) {
-            setResult(getResult(next));
-            setPhase("result");
-        } else {
-            setAnswers(next);
-            setStep((s) => s + 1);
-            setSelected(null);
-            setAnimKey((k) => k + 1);
+      const response = await fetch("http://localhost:8000/balance/ai/scenario", {
+        headers: {
+          "Authorization": `Bearer ${token}`
         }
-        }, 480);
+      });
+
+      if (!response.ok) {
+        if (response.status === 400) {
+          alert("백엔드에 seed 데이터가 없습니다. seed를 먼저 실행해 주세요!");
+        }
+        throw new Error("AI 시나리오를 가져오는 데 실패했습니다.");
+      }
+
+      const data = await response.json();
+      console.log("AI가 생성한 시나리오:", data);
+      setCurrentScenario(data);
+    } catch (error) {
+      console.error(error);
+      alert("다음 시나리오를 불러오는 중 오류가 발생했습니다.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const startGame = async () => {
+    setStep(1);
+    setPhase("game");
+    await fetchNextAiScenario();
+  };
+
+  const handleSelect = async (choice) => {
+    if (selectedLabel !== null || isLoading) return;
+    setSelectedLabel(choice.label);
+
+    const token = localStorage.getItem("accessToken");
+    if (!token) {
+      alert("로그인이 필요합니다. 로그인 화면으로 이동합니다.");
+      navigate("/");
+      return;
     }
 
-    function restart() {
-        setPhase("intro");
-        setStep(0);
-        setAnswers([]);
-        setSelected(null);
-        setResult(null);
+    setIsLoading(true);
+
+    const rawScenarioId = currentScenario.ai_scenario_id !== undefined ? currentScenario.ai_scenario_id : currentScenario.id;
+
+    const requestBody = {
+      ai_scenario_id: Number(rawScenarioId),
+      selected_label: String(choice.label),
+      selected_fear_tag_id: choice.fear_tag_id ? Number(choice.fear_tag_id) : null
+    };
+
+    console.log("프론트가 백엔드로 보낼 전송 데이터:", requestBody);
+
+    try {
+      const response = await fetch("http://localhost:8000/balance/ai/answers", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
+        },
+        body: JSON.stringify(requestBody),
+      });
+
+      if (response.status === 401) {
+        localStorage.removeItem("accessToken");
+        alert("로그인 세션이 만료되었습니다. 다시 로그인 해주세요.");
+        navigate("/");
+        return;
+      }
+
+      if (!response.ok) {
+        const errorDetail = await response.json().catch(() => ({}));
+        console.error("백엔드가 뱉은 실제 에러 내용:", errorDetail);
+        throw new Error("답변 제출 실패");
+      }
+
+      // 💡 선택 모션 유지를 위한 타이머 실행 후 스텝 전환
+      setTimeout(async () => {
+        if (step >= TOTAL_STEPS) {
+          await fetchFinalResults(token);
+          setPhase("result");
+        } else {
+          setStep((prev) => prev + 1);
+          await fetchNextAiScenario();
+        }
+      }, 450);
+
+    } catch (error) {
+      console.error(error);
+      alert("답변을 처리하는 중 오류가 발생했습니다. (콘솔창의 백엔드 에러 내용을 확인하세요)");
+      setSelectedLabel(null);
+      setIsLoading(false);
+    }
+  };
+
+  const fetchFinalResults = async (token) => {
+    setIsLoading(true);
+    try {
+      const response = await fetch("http://localhost:8000/balance/avoid-tags", {
+        headers: { "Authorization": `Bearer ${token}` }
+      });
+      if (!response.ok) throw new Error("최종 결과 조회 실패");
+      const tagsData = await response.json();
+      setAvoidTags(tagsData);
+    } catch (error) {
+      console.error("결과 파싱 오류:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // 💡 [해결] 전체 선택 버그 제어를 위해 고유 명칭(tagName)으로 토글 분기 처리
+  const handleToggleTag = (tagName) => {
+    if (isSavedToStorage) return; 
+    if (selectedTagNames.includes(tagName)) {
+      setSelectedTagNames(selectedTagNames.filter(name => name !== tagName));
+    } else {
+      setSelectedTagNames([...selectedTagNames, tagName]);
+    }
+  };
+
+  const saveToDislikeStorage = async () => {
+    if (selectedTagNames.length === 0) {
+      alert("보관함에 넣을 키워드를 하나 이상 선택해 주세요!");
+      return;
     }
 
-    const progress = (step / QUESTIONS.length) * 100;
-    const q = QUESTIONS[step];
+    const token = localStorage.getItem("accessToken");
+    setIsLoading(true);
 
-    return (
-        <div className="story-root">
+    // 💡 선택된 이름들을 기반으로 원래 object에서 유효한 id 배열 필터링 추출
+    const finalTargetIds = avoidTags
+      .filter(tag => selectedTagNames.includes(tag.tag_name))
+      .map(tag => tag.fear_tag_id || tag.id)
+      .filter(id => id !== undefined && id !== null);
 
-        {/* ─── INTRO ─── */}
-        {phase === "intro" && (
-            <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "40px 24px", textAlign: "center" }}>
-            <div className="anim-fadeup" style={{ maxWidth: 520 }}>
-                <div style={{ display: "inline-block", background: "#f1effe", color: "#7c3aed", borderRadius: "100px", padding: "8px 20px", fontSize: 13, fontWeight: 700, letterSpacing: "0.08em", marginBottom: 28 }}>
-                ✦ 스토리형 밸런스 게임
-                </div>
-                <h1 style={{ fontSize: "clamp(32px, 6vw, 52px)", fontWeight: 900, color: "#1c1917", lineHeight: 1.15, marginBottom: 20 }}>
-                나에게 맞는<br />
-                <span style={{ color: "#7c3aed" }}>진로</span>는 뭘까?
-                </h1>
-                <p style={{ fontSize: 17, color: "#78716c", lineHeight: 1.75, marginBottom: 48 }}>
-                나에게 딱 맞는 커리어를 알려드려요.
-                </p>
-                <div style={{ display: "flex", gap: 10, justifyContent: "center", marginBottom: 48 }}>
-                {["업무 방식", "성장 방향", "가치관"].map((t, i) => (
-                    <div key={i} style={{ background: "#fff", border: "1.5px solid #e5e2dc", borderRadius: 14, padding: "10px 18px", fontSize: 13, fontWeight: 500, color: "#57534e" }}>
-                    {t}
-                    </div>
-                ))}
-                </div>
-                <button className="start-btn" onClick={startGame}>
-                <span>게임 시작하기</span>
-                <span style={{ fontSize: 20 }}>→</span>
-                </button>
-            </div>
-            </div>
-        )}
+    try {
+      const response = await fetch("http://localhost:8000/balance/blacklist", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          fear_tag_ids: finalTargetIds
+        }),
+      });
 
-        {/* ─── GAME ─── */}
-        {phase === "game" && (
-            <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column", alignItems: "center", padding: "0 24px 60px" }}>
+      if (!response.ok) throw new Error("싫음 보관함 저장 실패");
 
-            {/* Top bar */}
-            <div style={{ width: "100%", maxWidth: 580, paddingTop: 32 }}>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
-                <span style={{ fontSize: 13, color: "#a8a29e", fontWeight: 500 }}>
-                    {step + 1} / {QUESTIONS.length}
-                </span>
-                <button onClick={restart} style={{ background: "none", border: "none", fontSize: 13, color: "#a8a29e", cursor: "pointer", padding: "4px 8px" }}>
-                    ✕ 처음으로
-                </button>
-                </div>
-                <div className="progress-bar">
-                <div className="progress-fill" style={{ width: `${progress}%` }} />
-                </div>
-            </div>
+      alert("🔒 선택하신 키워드가 '싫음 보관함'에 안전하게 보관되었습니다!");
+      setIsSavedToStorage(true);
+    } catch (error) {
+      console.error(error);
+      alert("보관함 저장 중 에러가 발생했습니다. 백엔드 라우터를 확인해 주세요.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
-            {/* Question card */}
-            <div key={animKey} className="anim-fadeup" style={{ width: "100%", maxWidth: 580, marginTop: 48 }}>
+  const restart = () => {
+    setPhase("intro");
+    setStep(0);
+    setCurrentScenario(null);
+    setSelectedLabel(null);
+    setAvoidTags([]);
+    setSelectedTagNames([]);       
+    setIsSavedToStorage(false);   
+  };
 
-                {/* Scene badge */}
-                <div style={{ fontSize: 13, fontWeight: 700, color: "#7c3aed", letterSpacing: "0.06em", marginBottom: 16 }}>
-                {q.scene}
-                </div>
+  const progress = (step / TOTAL_STEPS) * 100;
 
-                {/* 스토리 본문 */}
-                <div style={{ background: "#fff", border: "1.5px solid #e5e2dc", borderLeft: "4px solid #7c3aed", borderRadius: "0 20px 20px 0", padding: "24px 28px", marginBottom: 32 }}>
-                {q.story.map((paragraph, i) => (
-                    <p key={i} style={{ margin: i === 0 ? 0 : "14px 0 0", fontSize: 15, color: "#3d3935", lineHeight: 1.85, letterSpacing: "0.01em" }}>
-                    {paragraph}
-                    </p>
-                ))}
-                </div>
-
-                {/* Question */}
-                <h2 style={{ fontSize: "clamp(18px, 4vw, 24px)", fontWeight: 900, color: "#1c1917", marginBottom: 20, lineHeight: 1.3, padding: "0 2px" }}>
-                {q.question}
-                </h2>
-
-                {/* Options */}
-                <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
-                {q.options.map((opt) => (
-                    <button
-                    key={opt.label}
-                    className={`story-btn${selected === opt.tag ? " selected" : ""}`}
-                    onClick={() => handleSelect(opt.tag)}
-                    style={{ opacity: selected && selected !== opt.tag ? 0.45 : 1 }}
-                    >
-                    <div className="label-badge">{opt.label}</div>
-                    <div style={{ flex: 1 }}>
-                        <div style={{ fontSize: "clamp(15px, 3vw, 17px)", fontWeight: 700, color: "#1c1917", whiteSpace: "pre-line", lineHeight: 1.4, marginBottom: 6 }}>
-                        {opt.text}
-                        </div>
-                        <div style={{ fontSize: 13, color: "#a8a29e" }}>{opt.sub}</div>
-                    </div>
-                    {selected === opt.tag && (
-                        <div style={{ position: "absolute", right: 20, top: "50%", transform: "translateY(-50%)", width: 28, height: 28, borderRadius: "50%", background: "#7c3aed", display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", fontSize: 14, animation: "pop 0.3s ease both" }}>
-                        ✓
-                        </div>
-                    )}
-                    </button>
-                ))}
-                </div>
-
-            </div>
-            </div>
-        )}
-
-        {/* ─── RESULT ─── */}
-        {phase === "result" && result && (
-            <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column", alignItems: "center", padding: "48px 24px 80px" }}>
-            <div className="anim-fadeup" style={{ width: "100%", maxWidth: 580 }}>
-
-                {/* Result header */}
-                <div style={{ textAlign: "center", marginBottom: 36 }}>
-                <div style={{ fontSize: 72, marginBottom: 12, lineHeight: 1, animation: "pulse 2s ease infinite", display: "inline-block" }}>
-                    {result.emoji}
-                </div>
-                <div style={{ display: "inline-block", background: result.bg, color: result.color, borderRadius: "100px", padding: "6px 18px", fontSize: 13, fontWeight: 700, marginBottom: 16 }}>
-                    당신에게 어울리는 커리어
-                </div>
-                <h1 style={{ fontSize: "clamp(28px, 6vw, 42px)", fontWeight: 900, color: "#1c1917", marginBottom: 8 }}>
-                    {result.type}
-                </h1>
-                </div>
-
-                {/* Description */}
-                <div style={{ background: result.bg, border: `2px solid ${result.border}`, borderRadius: 24, padding: "28px 28px", marginBottom: 24 }}>
-                <p style={{ margin: 0, fontSize: 16, color: "#44403c", lineHeight: 1.75 }}>{result.desc}</p>
-                </div>
-
-                {/* Recommended jobs */}
-                <div style={{ background: "#fff", border: "1.5px solid #e5e2dc", borderRadius: 20, padding: "24px 28px", marginBottom: 24 }}>
-                <div style={{ fontSize: 12, fontWeight: 700, color: "#a8a29e", letterSpacing: "0.1em", marginBottom: 16 }}>
-                    추천 직군 · 직무
-                </div>
-                <div style={{ display: "flex", flexWrap: "wrap", gap: 4 }}>
-                    {result.jobs.map((job) => (
-                    <span key={job} className="job-chip">{job}</span>
-                    ))}
-                </div>
-                </div>
-
-                {/* Tip */}
-                <div style={{ background: "#1c1917", borderRadius: 20, padding: "22px 28px", marginBottom: 40, display: "flex", gap: 16, alignItems: "flex-start" }}>
-                <span style={{ fontSize: 22, flexShrink: 0 }}>💡</span>
-                <div>
-                    <div style={{ fontSize: 11, fontWeight: 700, color: "#a78bfa", letterSpacing: "0.1em", marginBottom: 6 }}>커리어 팁</div>
-                    <p style={{ margin: 0, fontSize: 15, color: "#e7e5e0", lineHeight: 1.65 }}>{result.tip}</p>
-                </div>
-                </div>
-
-                {/* Buttons */}
-                <div style={{ display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap" }}>
-                <button className="start-btn" onClick={startGame}>
-                    <span>다시 해보기</span>
-                    <span>↺</span>
-                </button>
-                <button className="restart-btn" onClick={restart}>
-                    <span>처음으로</span>
-                </button>
-                </div>
-            </div>
-            </div>
-        )}
+  return (
+    <div className="story-root">
+      {/* ─── INTRO PHASE ─── */}
+      {phase === "intro" && (
+        <div className="intro-container anim-fadeup">
+          <div className="intro-wrap">
+            <div className="intro-badge">✨ GPT AI 실시간 연동 테스트</div>
+            <h1 className="intro-title">
+              AI가 설계하는<br />
+              <span className="accent-color">나의 커리어 피해야 할 조건</span>
+            </h1>
+            <p className="intro-desc">
+              AI가 당신의 성향을 자극하는 스토리를 실시간으로 만듭니다.
+            </p>
+            <button className="start-btn" onClick={startGame} disabled={isLoading}>
+              <span>{isLoading ? "AI 시나리오 준비 중..." : "테스트 시작하기"}</span>
+              <span>→</span>
+            </button>
+          </div>
         </div>
-    );
-    }
+      )}
+
+      {/* ─── GAME PHASE ─── */}
+      {phase === "game" && currentScenario && (
+        <div className="game-container anim-fadeIn">
+          <div className="game-top-bar">
+            <div className="game-status">
+              <span className="game-step">질문 {step} / {TOTAL_STEPS}</span>
+              <button onClick={restart} className="game-restart-link">✕ 처음으로</button>
+            </div>
+            <div className="progress-bar">
+              <div className="progress-fill" style={{ width: `${progress}%` }} />
+            </div>
+          </div>
+
+          <div className="game-content-wrap">
+            <h2 className="game-question-text">
+              {currentScenario.scenario_title}
+            </h2>
+
+            <div className="game-story-box">
+              <p className="game-story-paragraph">{currentScenario.scenario_description}</p>
+            </div>
+
+            <div className="game-options-list">
+              {currentScenario.choices?.map((choice, idx) => (
+                <button
+                  key={idx}
+                  className={`story-btn${selectedLabel === choice.label ? " selected" : ""}`}
+                  onClick={() => handleSelect(choice)}
+                  disabled={isLoading}
+                  style={{ opacity: selectedLabel && selectedLabel !== choice.label ? 0.45 : 1 }}
+                >
+                  <div className="label-badge">
+                    {choice.label === "left" ? "A" : "B"}
+                  </div>
+                  <div className="option-text-wrap">
+                    <div className="option-main-text">{choice.text}</div>
+                    <div style={{ fontSize: "11px", color: "#ef4444", marginTop: "4px", opacity: 0.6 }}>
+                      (기피 자극 요인: {choice.keyword})
+                    </div>
+                  </div>
+                  {selectedLabel === choice.label && <div className="option-check-badge">✓</div>}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ─── RESULT PHASE ─── */}
+      {phase === "result" && (
+        <div className="result-container anim-pop">
+          <div className="result-wrap">
+            <div className="result-header">
+              <div className="result-emoji-anim">🚫</div>
+              <br />
+              <div className="result-badge" style={{ background: "#fee2e2", color: "#ef4444" }}>
+                AI 커리어 기피 종합 진단 결과
+              </div>
+              <h1 className="result-type-title">당신이 가장 멀리해야 할 일자리 환경</h1>
+              <p style={{ fontSize: "14px", color: "#6b7280", marginTop: "8px" }}>
+                보관함에 넣고 관리할 기피 키워드를 선택해 주세요.
+              </p>
+            </div>
+
+            <div className="result-jobs-box">
+              <div className="result-jobs-title">누적된 나의 기피 태그 순위 (클릭하여 개별 선택 가능)</div>
+              <div className="result-jobs-list" style={{ gap: "12px", flexDirection: "column" }}>
+                {avoidTags.length > 0 ? (
+                  avoidTags.map((tag, idx) => {
+                    const isChecked = selectedTagNames.includes(tag.tag_name);
+
+                    return (
+                      <div
+                        key={idx}
+                        onClick={() => handleToggleTag(tag.tag_name)}
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "space-between",
+                          width: "100%",
+                          padding: "14px 20px",
+                          background: isChecked ? "#f5f3ff" : "#fafaf9",
+                          border: isChecked ? "2px solid #7c3aed" : "1.5px solid #e7e5e4",
+                          color: isChecked ? "#7c3aed" : "#44403c",
+                          fontWeight: isChecked || idx === 0 ? "700" : "500",
+                          borderRadius: "12px",
+                          cursor: isSavedToStorage ? "not-allowed" : "pointer",
+                          transition: "all 0.2s ease",
+                          boxShadow: isChecked ? "0 4px 12px rgba(124,58,237,0.08)" : "none"
+                        }}
+                      >
+                        <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+                          <input 
+                            type="checkbox" 
+                            checked={isChecked}
+                            disabled={isSavedToStorage}
+                            onChange={() => {}} 
+                            style={{ 
+                              width: "18px", 
+                              height: "18px", 
+                              accentColor: "#7c3aed",
+                              cursor: isSavedToStorage ? "not-allowed" : "pointer" 
+                            }}
+                          />
+                          <span>{idx + 1}. {tag.tag_name}</span>
+                        </div>
+                        <span style={{ fontSize: "13px", opacity: 0.7 }}>
+                          누적 기피도: {tag.accumulated_weight ? tag.accumulated_weight.toFixed(1) : 0}점
+                        </span>
+                      </div>
+                    );
+                  })
+                ) : (
+                  <p style={{ color: "#a8a29e", textAlign: "center" }}>선택 데이터가 부족하여 분석된 키워드가 없습니다.</p>
+                )}
+              </div>
+            </div>
+
+            {/* 싫음 보관함 액션 영역 */}
+            <div className="result-actions" style={{ display: "flex", flexDirection: "column", gap: "12px", marginTop: "24px" }}>
+              <button 
+                className="start-btn"
+                onClick={saveToDislikeStorage}
+                disabled={isLoading || isSavedToStorage || selectedTagNames.length === 0}
+                style={{
+                  width: "100%",
+                  justifyContent: "center",
+                  borderRadius: "14px",
+                  padding: "18px",
+                  background: isSavedToStorage ? "#10b981" : selectedTagNames.length === 0 ? "#cbd5e1" : "#7c3aed",
+                  color: "#fff",
+                  cursor: (isLoading || isSavedToStorage || selectedTagNames.length === 0) ? "not-allowed" : "pointer",
+                }}
+              >
+                {isSavedToStorage ? "✓ 보관함 저장 완료" : `📥 선택한 ${selectedTagNames.length}개 키워드 싫음 보관함에 넣기`}
+              </button>
+
+              <button className="restart-btn" onClick={restart} style={{ width: "100%", justifyContent: "center", borderRadius: "14px", padding: "14px" }}>
+                <span>새로운 AI 시나리오로 다시 풀기</span>
+                <span>↺</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}

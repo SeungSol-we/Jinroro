@@ -86,10 +86,3 @@ app/
     ├── company/         # 회사/후기/블랙리스트
     └── fun/             # 사주/관상
 ```
-
-나중에 추가할 것들 (현재 뼈대만)
-
-fun/service.py → OpenAI API 연동하면 실제 사주/관상 분석 가능
-score_calculator.py → 직무별 태그 페널티 맵 데이터 보강 (기획팀이랑 협의)
-임금체불 공공 API 크롤링 스크립트 (/warnings/blacklist 에 데이터 채워넣기)
-Alembic 마이그레이션 파일 생성 (alembic revision --autogenerate -m "init")

@@ -89,3 +89,37 @@ class BalanceRepository:
             user_tag = UserFearTag(user_id=user_id, tag_id=tag_id, accumulated_weight=weight)
             self.db.add(user_tag)
         await self.db.flush()
+
+    async def get_all_fear_tags(self):
+        from app.modules.balance.models import FearTag
+        result = await self.db.execute(select(FearTag).order_by(FearTag.id))
+        return list(result.scalars().all())
+
+    async def get_fear_tag_by_id(self, tag_id: int):
+        from app.modules.balance.models import FearTag
+        result = await self.db.execute(select(FearTag).where(FearTag.id == tag_id))
+        return result.scalar_one_or_none()
+
+    async def get_user_fear_tag(self, user_id: int, tag_id: int) -> Optional[UserFearTag]:
+        result = await self.db.execute(
+            select(UserFearTag).where(
+                UserFearTag.user_id == user_id,
+                UserFearTag.tag_id == tag_id,
+            )
+        )
+        return result.scalar_one_or_none()
+
+    async def delete_fear_tag(self, user_id: int, tag_id: int) -> bool:
+        user_tag = await self.get_user_fear_tag(user_id, tag_id)
+        if not user_tag:
+            return False
+        await self.db.delete(user_tag)
+        await self.db.flush()
+        return True
+
+    async def get_ai_scenario(self, ai_scenario_id: int):
+        from app.modules.balance.models import AiGeneratedScenario
+        result = await self.db.execute(
+            select(AiGeneratedScenario).where(AiGeneratedScenario.id == ai_scenario_id)
+        )
+        return result.scalar_one_or_none()
